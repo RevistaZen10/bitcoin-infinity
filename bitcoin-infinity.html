@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitcoin Infinity — The Continuity Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F7931A;
+    --gold-dim: #c47310;
+    --gold-glow: rgba(247,147,26,0.15);
+    --white: #F5F0E8;
+    --off: #1a1612;
+    --bg: #0a0806;
+    --mid: #141008;
+    --border: rgba(247,147,26,0.18);
+    --inf: #FFD700;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── CANVAS STARS ─── */
+  #stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    z-index: 1;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(247,147,26,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .symbol-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 2.5rem;
+  }
+
+  .ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    animation: spin linear infinite;
+  }
+  .ring:nth-child(1) { animation-duration: 12s; border-color: rgba(247,147,26,0.4); }
+  .ring:nth-child(2) { inset: 14px; animation-duration: 20s; animation-direction: reverse; }
+  .ring:nth-child(3) { inset: 28px; animation-duration: 8s; border-color: rgba(247,147,26,0.25); }
+
+  .ring::after {
+    content: '';
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    top: -3px; left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
+  }
+
+  .btc-core {
+    position: absolute;
+    inset: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(247,147,26,0.6);
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 0.2rem;
+  }
+
+  h1 span {
+    color: var(--gold);
+    text-shadow: 0 0 60px rgba(247,147,26,0.4);
+  }
+
+  .infinity-glyph {
+    font-size: clamp(4rem, 12vw, 10rem);
+    color: var(--gold);
+    line-height: 1;
+    text-shadow: 0 0 80px rgba(247,147,26,0.5);
+    animation: pulse-glow 3s ease-in-out infinite;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 40px rgba(247,147,26,0.4); }
+    50% { text-shadow: 0 0 100px rgba(247,147,26,0.8), 0 0 200px rgba(247,147,26,0.2); }
+  }
+
+  .hero-sub {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: rgba(245,240,232,0.6);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  .cta-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 0.9rem 2.2rem;
+    border-radius: 2px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .btn-primary:hover {
+    background: var(--inf);
+    box-shadow: 0 0 30px rgba(247,147,26,0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+    transform: translateY(-2px);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.35;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: drop 1.5s ease-in-out infinite;
+  }
+
+  @keyframes drop {
+    0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    50% { opacity: 1; }
+    100% { opacity: 0; transform: scaleY(1); transform-origin: top; }
+  }
+
+  /* ─── SECTION BASE ─── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 7rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0.6;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 2rem;
+    color: var(--white);
+  }
+
+  .section-title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  /* ─── PROBLEM ─── */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 640px) { .problem-grid { grid-template-columns: 1fr; } }
+
+  .prob-card {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .prob-card:hover { border-color: var(--gold); }
+
+  .prob-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .prob-card:hover::before { opacity: 1; }
+
+  .prob-num {
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+    color: var(--gold);
+    opacity: 0.2;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+  }
+
+  .prob-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .prob-text {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.55);
+  }
+
+  /* ─── STATS ─── */
+  .divider {
+    position: relative;
+    z-index: 1;
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  .stats-band {
+    position: relative;
+    z-index: 1;
+    background: var(--mid);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 4rem 2rem;
+  }
+
+  .stats-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+  }
+
+  @media (max-width: 768px) { .stats-inner { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat {
+    padding: 2rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: rgba(245,240,232,0.4);
+    text-transform: uppercase;
+  }
+
+  /* ─── SOLUTION ─── */
+  .solution-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 768px) { .solution-layout { grid-template-columns: 1fr; gap: 2rem; } }
+
+  .code-block {
+    background: #0d0a07;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2rem;
+    font-size: 0.75rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block::before {
+    content: 'src/validation.cpp';
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-remove { color: #ff6b6b; opacity: 0.5; text-decoration: line-through; }
+  .code-add    { color: #69f0ae; }
+  .code-kw     { color: #82aaff; }
+  .code-type   { color: #ffcb6b; }
+  .code-fn     { color: var(--gold); }
+  .code-comment{ color: rgba(245,240,232,0.25); font-style: italic; }
+  .code-num    { color: #f78c6c; }
+
+  .solution-text p {
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: rgba(245,240,232,0.65);
+    margin-bottom: 1.25rem;
+  }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .pill {
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    margin-top: 3.5rem;
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    padding: 0 0 2.5rem 2rem;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+
+  .tl-item:hover { opacity: 1; }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -4px; top: 6px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 12px var(--gold);
+  }
+
+  .tl-year {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .tl-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .tl-text {
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.5);
+  }
+
+  /* ─── SUPPLY CHART ─── */
+  .chart-wrap {
+    margin-top: 3rem;
+    background: var(--mid);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    border-radius: 2px;
+  }
+
+  .chart-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0.7;
+  }
+
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 160px;
+  }
+
+  .bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    background: linear-gradient(to top, var(--gold), rgba(247,147,26,0.3));
+    border-radius: 1px 1px 0 0;
+    transition: height 1s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+
+  .bar::after {
+    content: attr(data-val);
+    position: absolute;
+    top: -1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .bar-label {
+    font-size: 0.55rem;
+    color: rgba(245,240,232,0.35);
+    text-align: center;
+  }
+
+  /* ─── COMPARISON ─── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .compare-card {
+    padding: 2.5rem;
+    border: 1px solid var(--border);
+  }
+
+  .compare-card.dead {
+    background: rgba(255,50,50,0.03);
+    border-color: rgba(255,80,80,0.15);
+  }
+
+  .compare-card.alive {
+    background: rgba(247,147,26,0.04);
+    border-color: rgba(247,147,26,0.3);
+  }
+
+  .compare-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .dead .compare-label { color: rgba(255,100,100,0.6); }
+  .alive .compare-label { color: var(--gold); }
+
+  .compare-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+
+  .compare-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .compare-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.7rem;
+  }
+
+  .compare-row span:first-child { color: rgba(245,240,232,0.4); }
+  .dead  .compare-row span:last-child { color: rgba(255,100,100,0.8); }
+  .alive .compare-row span:last-child { color: #69f0ae; }
+
+  /* ─── AUTHOR ─── */
+  .author-section {
+    position: relative;
+    z-index: 1;
+    background: var(--mid);
+    border-top: 1px solid var(--border);
+    padding: 5rem 2rem;
+    text-align: center;
+  }
+
+  .author-inner { max-width: 600px; margin: 0 auto; }
+
+  .author-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--gold);
+    box-shadow: 0 0 30px var(--gold-glow);
+  }
+
+  .author-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .author-inst {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.35);
+    margin-bottom: 1.5rem;
+  }
+
+  .author-bio {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.55);
+    margin-bottom: 2rem;
+  }
+
+  .link-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ext-link {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+  }
+  .ext-link:hover { border-color: var(--gold); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.2);
+  }
+
+  footer span { color: var(--gold); opacity: 0.5; }
+
+  /* ─── GREAT FILTER SECTION ─── */
+  .filter-block {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    padding: 2rem 2.5rem;
+    margin-top: 3rem;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.7);
+    position: relative;
+  }
+  .filter-block strong { color: var(--gold); font-style: normal; }
+
+  .gen-chain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 3.5rem;
+    overflow-x: auto;
+    padding: 1rem 0 2rem;
+  }
+
+  .gen-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+    width: 130px;
+  }
+
+  .gen-circle {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    color: var(--gold);
+    background: rgba(247,147,26,0.05);
+    flex-shrink: 0;
+    transition: box-shadow 0.3s;
+    text-shadow: 0 0 20px rgba(247,147,26,0.4);
+  }
+  .gen-circle:hover { box-shadow: 0 0 30px var(--gold-glow); }
+
+  .gen-circle.lost {
+    border-color: rgba(255,80,80,0.6);
+    color: rgba(255,90,90,0.9);
+    background: rgba(255,30,30,0.06);
+    text-shadow: 0 0 20px rgba(255,50,50,0.4);
+  }
+
+  .gen-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 0.6rem;
+    opacity: 0.6;
+    font-family: 'Space Mono', monospace;
+  }
+  .gen-circle.lost + .gen-tag {
+    color: rgba(255,90,90,0.6);
+  }
+
+  .gen-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.28);
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.7;
+    margin-top: 0.5rem;
+  }
+
+  .gen-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    margin-bottom: 3.6rem;
+    padding: 0 0.25rem;
+  }
+
+  .gen-connector-line {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(247,147,26,0.6), rgba(255,80,80,0.4));
+  }
+
+  .gen-connector-loss {
+    font-size: 0.55rem;
+    letter-spacing: 0.05em;
+    color: rgba(255,120,120,0.75);
+    white-space: nowrap;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ─── MATH SECTION ─── */
+  .math-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+  }
+  @media (max-width: 640px) { .math-grid { grid-template-columns: 1fr; } }
+
+  .math-card {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+
+  .math-card-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .math-card.conservative .math-card-label { color: rgba(255,200,80,0.7); }
+  .math-card.realistic .math-card-label { color: rgba(255,80,80,0.7); }
+
+  .math-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+
+  .math-step {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.7rem;
+  }
+  .math-step span:first-child { color: rgba(245,240,232,0.45); }
+
+  .math-result {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.3);
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+  }
+  .conservative .math-result { color: #ffcb6b; }
+  .realistic .math-result { color: rgba(255,100,100,0.9); }
+
+  .math-sub {
+    font-size: 0.6rem;
+    font-weight: 400;
+    font-family: 'Space Mono', monospace;
+    color: rgba(245,240,232,0.3);
+    display: block;
+    margin-top: 0.3rem;
+  }
+
+  /* ─── DEBATE ─── */
+  .debate-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+  }
+  @media (max-width: 640px) { .debate-grid { grid-template-columns: 1fr; } }
+
+  .debate-card {
+    padding: 2.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .debate-card.trad { background: rgba(100,100,100,0.04); }
+  .debate-card.evol { background: rgba(247,147,26,0.04); border-color: rgba(247,147,26,0.25); }
+
+  .debate-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .debate-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+  }
+  .trad .debate-card-title { color: rgba(245,240,232,0.6); }
+  .evol .debate-card-title { color: var(--gold); }
+
+  .debate-sub {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.3);
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .debate-item {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.55);
+    margin-bottom: 0.75rem;
+  }
+  .debate-item::before { content: '—'; color: rgba(245,240,232,0.2); flex-shrink: 0; }
+  .evol .debate-item::before { content: '✦'; color: var(--gold); opacity: 0.6; }
+
+  .debate-verdict {
+    margin-top: 3rem;
+    background: var(--mid);
+    border: 1px solid rgba(247,147,26,0.3);
+    border-left: 3px solid var(--gold);
+    padding: 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .debate-verdict-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  .debate-verdict p {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.55);
+  }
+
+  /* ─── CAUSES ─── */
+  .causes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 3rem;
+  }
+  @media (max-width: 768px) { .causes-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .causes-grid { grid-template-columns: 1fr; } }
+
+  .cause-card {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    transition: border-color 0.3s;
+  }
+  .cause-card:hover { border-color: var(--gold); }
+
+  .cause-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .cause-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.03em;
+  }
+
+  .cause-text {
+    font-size: 0.72rem;
+    line-height: 1.75;
+    color: rgba(245,240,232,0.45);
+  }
+
+  /* ─── URGENCY ─── */
+  .urgency-band {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, rgba(247,147,26,0.06) 0%, rgba(10,8,6,0) 60%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 2rem;
+    text-align: center;
+  }
+
+  .urgency-inner { max-width: 700px; margin: 0 auto; }
+
+  .urgency-quote {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.5;
+    color: rgba(245,240,232,0.75);
+    margin-bottom: 2rem;
+  }
+
+  .urgency-quote em { color: var(--gold); font-style: normal; }
+
+  .urgency-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.3);
+    line-height: 1.8;
+  }
+
+  /* ─── REVEAL ANIMATION ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="symbol-wrap">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="btc-core">₿</div>
+  </div>
+  <div class="tag">The Continuity Protocol</div>
+  <h1>BITCOIN<br><span>INFINITY</span></h1>
+  <span class="infinity-glyph">∞</span>
+  <p class="hero-sub">A single-line modification that keeps Bitcoin alive — not for 132 years, but forever.</p>
+  <div class="cta-row">
+    <a href="#solution" class="btn btn-primary">Read the Protocol</a>
+    <a href="https://github.com/RevistaZen10/bitcoin-infinity" target="_blank" class="btn btn-ghost">GitHub ↗</a>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="reveal">
+    <div class="section-label">01 — The Problem</div>
+    <h2 class="section-title">Bitcoin's<br><em>Great Filter.</em></h2>
+  </div>
+
+  <div class="filter-block reveal">
+    The greatest threat to Bitcoin's future is not regulation, competition, or quantum computing.<br>
+    It is a simple, unavoidable biological fact: <strong>people die.</strong><br><br>
+    The original Bitcoin operates on the dangerous assumption that the transfer of private keys from one generation to the next will be a flawless process. A ~132-year cycle spans practically <strong>two full human generations</strong> — imposing a near-impossible condition: for an asset to remain in circulation, its private key must be successfully inherited not once, but <strong>twice.</strong>
+  </div>
+
+  <div class="gen-chain reveal">
+
+    <div class="gen-node">
+      <div class="gen-circle">1</div>
+      <div class="gen-tag">Generation</div>
+      <div class="gen-label">Original<br>Owner</div>
+    </div>
+
+    <div class="gen-connector">
+      <div class="gen-connector-line"></div>
+      <div class="gen-connector-loss">−30% lost</div>
+    </div>
+
+    <div class="gen-node">
+      <div class="gen-circle">2</div>
+      <div class="gen-tag">Generation</div>
+      <div class="gen-label">First<br>Heir</div>
+    </div>
+
+    <div class="gen-connector">
+      <div class="gen-connector-line"></div>
+      <div class="gen-connector-loss">−30% lost</div>
+    </div>
+
+    <div class="gen-node">
+      <div class="gen-circle">3</div>
+      <div class="gen-tag">Generation</div>
+      <div class="gen-label">Second<br>Heir</div>
+    </div>
+
+    <div class="gen-connector">
+      <div class="gen-connector-line" style="background:linear-gradient(90deg,rgba(255,80,80,0.5),rgba(200,30,30,0.2))"></div>
+      <div class="gen-connector-loss">−30% lost</div>
+    </div>
+
+    <div class="gen-node">
+      <div class="gen-circle lost">∅</div>
+      <div class="gen-tag" style="color:rgba(255,90,90,0.5)">Forever Lost</div>
+      <div class="gen-label">Digital<br>Graveyard</div>
+    </div>
+
+  </div>
+
+  <div class="problem-grid reveal" style="margin-top:2rem">
+    <div class="prob-card">
+      <div class="prob-num">30%</div>
+      <div class="prob-title">Generational Key Loss</div>
+      <p class="prob-text">At minimum 30% of Bitcoin is permanently lost each generation as private keys fail to transfer to heirs. After two generations, 51% of all BTC becomes economically dead.</p>
+    </div>
+    <div class="prob-card">
+      <div class="prob-num">2140</div>
+      <div class="prob-title">Mining Incentive Collapse</div>
+      <p class="prob-text">When block rewards reach zero, miners depend entirely on transaction fees. Shrinking supply → less activity → fees disappear → hash rate collapses → 51% attack window opens.</p>
+    </div>
+    <div class="prob-card">
+      <div class="prob-num">64%</div>
+      <div class="prob-title">Supply Lost in 264 Years</div>
+      <p class="prob-text">Realistic models with 40% generational loss rate project 64% of all BTC inaccessible after two complete issuance cycles. The liquid supply contracts into economic paralysis.</p>
+    </div>
+    <div class="prob-card">
+      <div class="prob-num">∅</div>
+      <div class="prob-title">Network Petrification</div>
+      <p class="prob-text">Without mining incentives and with shrinking liquidity, Bitcoin transitions from a functional currency to a historical artifact. Not hacked — simply abandoned by entropy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stats-inner">
+    <div class="stat reveal">
+      <div class="stat-num">132</div>
+      <div class="stat-label">Years Per Cycle</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">49M</div>
+      <div class="stat-label">BTC Equilibrium Supply</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Mining Active Forever</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Line of Code Changed</div>
+    </div>
+  </div>
+</div>
+
+<!-- MATH -->
+<section>
+  <div class="reveal">
+    <div class="section-label">02 — The Brutal Math</div>
+    <h2 class="section-title">Numbers don't<br><em>lie or inherit.</em></h2>
+  </div>
+  <div class="math-grid reveal">
+    <div class="math-card conservative">
+      <div class="math-card-label">Conservative Scenario</div>
+      <div class="math-card-title">30% Loss Per Generation</div>
+      <div class="math-step"><span>Generation 1 → 2</span><span>70% survive</span></div>
+      <div class="math-step"><span>Generation 2 → 3</span><span>70% of 70%</span></div>
+      <div class="math-step"><span>After 132 years</span><span>49% remain</span></div>
+      <div class="math-result">51% permanently lost<span class="math-sub">digital ghosts — forever inaccessible</span></div>
+    </div>
+    <div class="math-card realistic">
+      <div class="math-card-label">Realistic Scenario</div>
+      <div class="math-card-title">40% Loss Per Generation</div>
+      <div class="math-step"><span>First 132-year cycle</span><span>60% survive</span></div>
+      <div class="math-step"><span>Second cycle (264yr)</span><span>60% of 60%</span></div>
+      <div class="math-step"><span>After 264 years</span><span>36% remain</span></div>
+      <div class="math-result">64% permanently lost<span class="math-sub">the network becomes a vast digital graveyard</span></div>
+    </div>
+  </div>
+
+  <div class="filter-block reveal" style="margin-top:2rem; font-size:1rem;">
+    ⚠️ <strong>Why divisibility doesn't solve it:</strong> It doesn't matter if we have 100 million satoshis per bitcoin — if the private keys are lost, those satoshis are completely unusable. It's like having gold at the bottom of the ocean: it exists in theory, but nobody can access it. <strong>Divisibility is a unit of measurement, not a recovery mechanism.</strong>
+  </div>
+</section>
+
+<!-- CAUSES -->
+<section>
+  <div class="reveal">
+    <div class="section-label">03 — Root Causes</div>
+    <h2 class="section-title">Why keys<br><em>disappear forever.</em></h2>
+  </div>
+  <div class="causes-grid reveal">
+    <div class="cause-card">
+      <span class="cause-icon">💀</span>
+      <div class="cause-title">Sudden Death</div>
+      <p class="cause-text">Unexpected deaths without any inheritance preparation. No will, no instructions, no key handoff — and millions in BTC vanish overnight.</p>
+    </div>
+    <div class="cause-card">
+      <span class="cause-icon">⚔️</span>
+      <div class="cause-title">Family Conflicts</div>
+      <p class="cause-text">Disputes among heirs during inheritance frequently result in no single person having complete access — keys split, custody contested, assets frozen forever.</p>
+    </div>
+    <div class="cause-card">
+      <span class="cause-icon">🧠</span>
+      <div class="cause-title">Memory Loss</div>
+      <p class="cause-text">Seed phrases memorized and never written down. Aging, illness, and cognitive decline erase what hardware alone can't recover.</p>
+    </div>
+    <div class="cause-card">
+      <span class="cause-icon">💾</span>
+      <div class="cause-title">Hardware Decay</div>
+      <p class="cause-text">Devices corrupted, drives failed, hardware wallets discontinued. Technology outlives its support window — not its owner's intentions.</p>
+    </div>
+    <div class="cause-card">
+      <span class="cause-icon">🌍</span>
+      <div class="cause-title">Geographic Dispersion</div>
+      <p class="cause-text">Families separated across borders. Multi-sig keys distributed globally become unreachable when key holders die in different jurisdictions.</p>
+    </div>
+    <div class="cause-card">
+      <span class="cause-icon">⚖️</span>
+      <div class="cause-title">No Legal Framework</div>
+      <p class="cause-text">Unlike bank accounts, there is no "recovery" for lost private keys. No judge, no notary, no institution can restore access. Lost means lost. Forever.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEBATE -->
+<section>
+  <div class="reveal">
+    <div class="section-label">04 — The Great Debate</div>
+    <h2 class="section-title">Evolution or<br><em>extinction?</em></h2>
+  </div>
+  <div class="debate-grid reveal">
+    <div class="debate-card trad">
+      <span class="debate-icon">🔒</span>
+      <div class="debate-card-title">Traditionalist View</div>
+      <div class="debate-sub">"Scarcity is value"</div>
+      <div class="debate-item">Lost coins are "donations" that increase scarcity of remaining supply</div>
+      <div class="debate-item">Fixed supply is a feature, not a defect — immune to political manipulation</div>
+      <div class="debate-item">100 million satoshis are sufficient for any conceivable economic activity</div>
+      <div class="debate-item">Market won't value a modified Bitcoin equally to the original</div>
+    </div>
+    <div class="debate-card evol">
+      <span class="debate-icon">∞</span>
+      <div class="debate-card-title">Bitcoin Infinity View</div>
+      <div class="debate-sub">"Continuity is survival"</div>
+      <div class="debate-item">Human mortality is Bitcoin's primary existential threat — not a theory, a mathematical certainty</div>
+      <div class="debate-item">Massive generational loss is inevitable — the question is what we do about it</div>
+      <div class="debate-item">Perpetual reissuance cycles maintain liquidity without centralized authority</div>
+      <div class="debate-item">Functional currency requires adequate liquid supply — scarcity alone cannot preserve utility</div>
+    </div>
+  </div>
+  <div class="debate-verdict reveal">
+    <div class="debate-verdict-title">🏆 Mathematical Reality Prevails</div>
+    <p>After detailed analysis, the evolutionist argument presents stronger foundations by recognizing and addressing a real existential problem that traditionalism simply ignores. The generational math is irrefutable: a ~132-year cycle = 2 generations = inevitable massive loss. Ideological commitment to fixed supply provides no mathematical model for network sustainability. <strong style="color:var(--gold)">Bitcoin Infinity does.</strong></p>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="reveal">
+    <div class="section-label">05 — The Solution</div>
+    <h2 class="section-title">One line.<br><em>Infinite life.</em></h2>
+  </div>
+  <div class="solution-layout reveal">
+    <div class="code-block">
+<span class="code-kw">CAmount</span> <span class="code-fn">GetBlockSubsidy</span>(<span class="code-type">int64_t</span> nHeight,
+  <span class="code-kw">const</span> Consensus::Params&amp; consensusParams)
+{
+  <span class="code-type">int</span> halvings = (<span class="code-type">int</span>)(nHeight /
+    consensusParams.nSubsidyHalvingInterval);
+
+  <span class="code-remove">if (halvings >= 64)</span>
+  <span class="code-remove">    return 0;</span>
+  <span class="code-add">halvings = halvings % 33;</span>
+
+  CAmount nSubsidy = <span class="code-num">50</span> * COIN;
+  <span class="code-comment">// Halves every 210,000 blocks (~4 years)</span>
+  nSubsidy >>= halvings;
+  <span class="code-kw">return</span> nSubsidy;
+}
+    </div>
+    <div class="solution-text">
+      <p>The original Bitcoin code kills the block reward permanently when <code>halvings ≥ 64</code>. Bitcoin Infinity replaces that hard stop with a single modulo operation.</p>
+      <p>Every 33 halvings — approximately 132 years — the counter wraps to zero. The 50 BTC reward restarts. All previously mined bitcoins remain 100% valid and circulating.</p>
+      <p>The network never dies. Mining never stops. Supply converges to a stable equilibrium of <strong style="color:var(--gold)">~49 million BTC</strong> — not because we planned it, but because mathematics demands it.</p>
+      <div class="pill-row">
+        <span class="pill">✅ 113 Tests Passed</span>
+        <span class="pill">✅ No UB</span>
+        <span class="pill">✅ Backward Compatible</span>
+        <span class="pill">✅ Open Source</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPLY CHART -->
+<section>
+  <div class="reveal">
+    <div class="section-label">06 — Supply Equilibrium</div>
+    <h2 class="section-title">Supply that<br><em>stabilizes, not inflates.</em></h2>
+  </div>
+  <div class="chart-wrap reveal" id="chart">
+    <div class="chart-title">Circulating Supply Per Cycle (BTC millions) — 30% generational loss</div>
+    <div class="bars" id="bars">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+  <div class="reveal">
+    <div class="section-label">07 — Comparison</div>
+    <h2 class="section-title">Two futures.<br><em>One choice.</em></h2>
+  </div>
+  <div class="compare-grid reveal">
+    <div class="compare-card dead">
+      <div class="compare-label">Without Bitcoin Infinity</div>
+      <div class="compare-name">Bitcoin Original</div>
+      <div class="compare-rows">
+        <div class="compare-row"><span>Mining ends</span><span>~Year 2140</span></div>
+        <div class="compare-row"><span>Supply in 2500</span><span>~10M (falling)</span></div>
+        <div class="compare-row"><span>Network security</span><span>Collapses 2140+</span></div>
+        <div class="compare-row"><span>51% attack risk</span><span>HIGH after 2140</span></div>
+        <div class="compare-row"><span>Long-term fate</span><span>Petrified artifact</span></div>
+        <div class="compare-row"><span>Code changed</span><span>None</span></div>
+      </div>
+    </div>
+    <div class="compare-card alive">
+      <div class="compare-label">With Bitcoin Infinity</div>
+      <div class="compare-name">Bitcoin ∞</div>
+      <div class="compare-rows">
+        <div class="compare-row"><span>Mining ends</span><span>Never</span></div>
+        <div class="compare-row"><span>Supply in 2500</span><span>~49M (stable)</span></div>
+        <div class="compare-row"><span>Network security</span><span>Perpetual</span></div>
+        <div class="compare-row"><span>51% attack risk</span><span>Minimal forever</span></div>
+        <div class="compare-row"><span>Long-term fate</span><span>Functional currency</span></div>
+        <div class="compare-row"><span>Code changed</span><span>1 line</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <div class="reveal">
+    <div class="section-label">08 — Timeline</div>
+    <h2 class="section-title">The road<br><em>to consensus.</em></h2>
+  </div>
+  <div class="timeline reveal">
+    <div class="tl-item">
+      <div class="tl-year">2025</div>
+      <div class="tl-title">Protocol Published</div>
+      <p class="tl-text">Mathematical proof, verified code, and open-source implementation released for community review.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2025 — 2060</div>
+      <div class="tl-title">Academic & Developer Debate</div>
+      <p class="tl-text">Research, peer review, and refinement within the cryptographic and economic community.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2060 — 2110</div>
+      <div class="tl-title">Institutional Awareness</div>
+      <p class="tl-text">Long-term holders and institutions begin planning for post-2140 network reality. BIP process initiates.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2110 — 2140</div>
+      <div class="tl-title">Network Consensus & Activation</div>
+      <p class="tl-text">Miner adoption, node upgrade coordination, and soft-consensus achieved before block 6,930,000.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2140 — ∞</div>
+      <div class="tl-title">Cycle 1 Begins. Forever.</div>
+      <p class="tl-text">Block reward resets to 50 BTC. Mining incentives restored. Bitcoin continues not for a generation — but for all of them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- URGENCY -->
+<div class="urgency-band">
+  <div class="urgency-inner reveal">
+    <p class="urgency-quote">
+      "The question is not whether there will be massive Bitcoin losses across generations —<br>
+      the question is <em>what we will do about it.</em>"
+    </p>
+    <p class="urgency-sub">
+      THIS IS NOT A PROBLEM FOR 2140.<br>
+      IT IS A DISCUSSION WE NEED TO HAVE NOW.<br><br>
+      The Bitcoin community must step out of its comfort zone of traditional technical debates and face this inevitable demographic reality. The decisions made today will determine whether Bitcoin becomes a lasting legacy for humanity — or a historical curiosity from a primitive digital era.
+    </p>
+  </div>
+</div>
+
+<!-- AUTHOR -->
+<div class="author-section">
+  <div class="author-inner reveal">
+    <div class="author-avatar">A</div>
+    <div class="author-name">Andrade, P. S. A.</div>
+    <div class="author-inst">Graduate in Mathematics — Faculdade de Guarulhos (FG), Brazil</div>
+    <p class="author-bio">"Satoshi gave us the beginning.<br>Bitcoin Infinity gives us a future."</p>
+    <div class="link-row">
+      <a href="https://github.com/RevistaZen10/bitcoin-infinity" target="_blank" class="ext-link">GitHub Repository ↗</a>
+      <a href="https://orcid.org/0009-0007-6299-2008" target="_blank" class="ext-link">ORCID Profile ↗</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>₿</span> Bitcoin Infinity — The Continuity Protocol &nbsp;|&nbsp;
+  CC-BY-4.0 &nbsp;|&nbsp; October 2025 &nbsp;|&nbsp;
+  <span>∞</span>
+</footer>
+
+<script>
+// ─── STARS ───
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 220; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(),
+      speed: Math.random() * 0.003 + 0.001,
+      twinkle: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawStars(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    s.twinkle += s.speed;
+    const alpha = 0.2 + 0.5 * (0.5 + 0.5 * Math.sin(s.twinkle));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(247,200,100,${alpha})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+
+window.addEventListener('resize', () => { resize(); initStars(); });
+resize(); initStars(); drawStars();
+
+// ─── SUPPLY CHART ───
+const cycleData = [
+  { cycle: 'C0', val: 14.7 },
+  { cycle: 'C1', val: 29.4 },
+  { cycle: 'C2', val: 37.1 },
+  { cycle: 'C3', val: 41.5 },
+  { cycle: 'C5', val: 44.8 },
+  { cycle: 'C8', val: 47.1 },
+  { cycle: 'C12', val: 48.5 },
+  { cycle: 'C20', val: 48.9 },
+  { cycle: 'C∞', val: 49.0 },
+];
+const maxVal = 49.0;
+const barsEl = document.getElementById('bars');
+cycleData.forEach(d => {
+  const pct = (d.val / maxVal) * 100;
+  barsEl.innerHTML += `
+    <div class="bar-wrap">
+      <div class="bar" data-val="${d.val}M" style="height:${pct}%"></div>
+      <div class="bar-label">${d.cycle}</div>
+    </div>`;
+});
+
+// ─── REVEAL ON SCROLL ───
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), 80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// ─── SMOOTH NAV ───
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))
+      ?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
