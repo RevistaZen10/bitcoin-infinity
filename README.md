@@ -9,7 +9,7 @@
 
 * **Official Website:** [https://revistazen10.github.io/bitcoin-infinity/](https://revistazen10.github.io/bitcoin-infinity/)
 * **Institution (ORCID):** [Revista Zenodo - 0009-0007-6299-2008](https://orcid.org/0009-0007-6299-2008) ![ORCID Logo](https://orcid.org/sites/default/files/images/orcid_24x24.png)
-* **PAPER (DOI):** [https://doi.org/10.5281/zenodo.18667808](https://doi.org/10.5281/zenodo.18667808) 
+* **Paper (DOI):** [https://doi.org/10.5281/zenodo.18667808](https://doi.org/10.5281/zenodo.18667808) 
 
 
 ---
