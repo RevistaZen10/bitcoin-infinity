@@ -8,7 +8,7 @@
 ## 🔗 Project Links
 
 * **Official Website:** [https://revistazen10.github.io/bitcoin-infinity/](https://revistazen10.github.io/bitcoin-infinity/)
-* **Author (ORCID):** [Andrade, P. S. A. - 0009-0007-6299-2008](https://orcid.org/0009-0007-6299-2008)
+* **Author (ORCID):** [Paulo Sérgio Andrade - 0009-0007-6299-2008](https://orcid.org/0009-0007-6299-2008) ![ORCID Logo](https://orcid.org/sites/default/files/images/orcid_24x24.png)
 
 ---
 
@@ -20,7 +20,7 @@ This protocol formalizes the transition from a decaying fixed-supply model to a 
 
 ## ⚠️ The Problem: The "Supply Contraction" Vulnerability
 
-According to the generational loss research presented by *Andrade, P. S. A.*:
+According to the generational loss research presented by *Paulo Sérgio Andrade*:
 * **Asset Inaccessibility:** Realistic models project that **64%** of the total supply will be permanently lost within ~260 years due to human error and inheritance failure.
 * **Security Budget Collapse:** At approximately block height 6,930,000 (circa 2140 CE), the cessation of block rewards eliminates the primary incentive for miners, exposing the network to existential risks.
 
