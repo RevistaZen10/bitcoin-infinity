@@ -1,48 +1,47 @@
 # Bitcoin Infinity (∞)
 
-> **A Perpetual Continuity Protocol** > Proposta de modificação mínima e matematicamente fundamentada para o Bitcoin Core para garantir a segurança da rede e a estabilidade da oferta a longo prazo.
+> **A Perpetual Continuity Protocol**
+> A minimal, mathematically grounded modification to Bitcoin Core designed to ensure long-term network security and supply stability.
 
 ---
 
-## 📌 Visão Geral
+## 📌 Overview
 
-O **Bitcoin Infinity** aborda uma vulnerabilidade crítica de longo prazo no design original do Bitcoin: a contração permanente da oferta causada pela falha na herança de chaves privadas (**Generational Loss Model**) e a eventual extinção do subsídio de bloco (Block Reward).
+**Bitcoin Infinity** addresses a critical long-term vulnerability in the original Bitcoin design: the mathematical inevitability of permanent supply contraction. This is driven by the **Generational Loss Model**—the failure of private-key inheritance over centuries.
 
-Este projeto formaliza a transição de um modelo de suprimento fixo para um modelo de **equilíbrio estável**, garantindo que o orçamento de segurança da mineração nunca seja zerado, protegendo a rede contra ataques de 51% perpetuamente.
+This protocol formalizes the transition from a decaying fixed-supply model to a **stable equilibrium model**, ensuring that the mining security budget never hits zero, thus protecting the network against sustained 51% attacks indefinitely.
 
-## ⚠️ O Problema: Vulnerabilidade de Longo Prazo
+## ⚠️ The Problem: The "Supply Contraction" Vulnerability
 
-Segundo o modelo de perda geracional apresentado no paper:
-* **Perda de Suprimento:** Estimativas realistas projetam que **64%** do suprimento total se tornará inacessível em ~260 anos.
-* **Risco de Ataque:** A interrupção das recompensas no bloco 6.930.000 (aprox. ano 2140) elimina o incentivo financeiro dos mineradores, expondo a rede a riscos sistêmicos.
+According to the generational loss research presented by *Andrade, P. S. A.*:
+* **Asset Inaccessibility:** Realistic models project that **64%** of the total supply will be permanently lost within ~260 years due to human error and inheritance failure.
+* **Security Budget Collapse:** At approximately block height 6,930,000 (circa 2140 CE), the cessation of block rewards eliminates the primary incentive for miners, exposing the network to existential risks.
 
-## 🚀 A Solução: Modificação `GetBlockSubsidy()`
+## 🚀 The Solution: `GetBlockSubsidy()` Modification
 
-A proposta substitui um condicional de interrupção (*hard-stop*) por uma operação de **módulo**, reiniciando a curva de halving original de 50 BTC a cada 33 halvings (aproximadamente a cada 132 anos).
+The proposal replaces the original "hard-stop" conditional in the Bitcoin Core source code with a **modulo operation**. This restarts the original 50 BTC/block halving curve every 33 halvings (approximately every 132 years) in perpetuity.
 
-### Diferenciais Técnicos
-- **Equilíbrio Dinâmico:** O suprimento circulante converge para um equilíbrio estável $C^* = S_0r / (1 - r)$.
-- **Compatibilidade:** Mantém compatibilidade total com a rede existente até o bloco de ativação.
-- **Segurança Verificada:** Implementação testada contra 113 testes de limite (*boundary tests*) com zero falhas.
-- **C++17 Standard:** Código limpo, sem comportamentos indefinidos.
+### Technical Highlights
+- **Stable Equilibrium:** Under this scheme, circulating supply converges to a stable equilibrium $C^* = S_0r / (1 - r)$. At a 30% generational loss rate, the supply stabilizes at approximately **49M BTC**.
+- **Incentive Preservation:** Mining rewards are preserved indefinitely to maintain hashpower and network integrity.
+- **Full Compatibility:** Maintains complete backward compatibility with the existing network until the pre-defined activation block.
+- **Verified Implementation:** Tested against **113 boundary tests** with zero failures and no undefined behavior under **C++17**.
 
-## 📊 Modelo Matemático
+## 📊 Mathematical Foundation
 
-Sob este esquema, com uma perda geracional de 30%, o suprimento estabiliza em aproximadamente **49M BTC**, garantindo que o Bitcoin continue sendo um ativo escasso, mas funcional como meio de troca e reserva de valor protegida.
+The protocol demonstrates that by recycling the halving curve, the "new" issuance eventually balances out the "lost" coins (generational loss), creating a sustainable ecosystem that remains scarce but functional.
 
+## 🛠 Implementation (Conceptual)
 
-
-## 🛠 Como Implementar (Conceitual)
-
-A alteração no núcleo do Bitcoin Core foca na função de subsídio:
+The core change focuses on the subsidy logic within Bitcoin Core:
 
 ```cpp
-// Exemplo conceitual da lógica Bitcoin Infinity
+// Bitcoin Infinity: Logic replacement in GetBlockSubsidy()
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
     
-    // A cada 33 halvings (~132 anos), a curva de emissão reinicia
+    // The curve restarts every 33 halvings (~132 years)
     halvings %= 33; 
 
     CAmount nSubsidy = 50 * COIN;
