@@ -1,6 +1,3 @@
-Aqui está o código completo exatamente no formato **Markdown** (bloco de código bruto), pronto para você copiar e colar no seu arquivo `README.md`:
-
-```markdown
 # Bitcoin Infinity (∞)
 
 > **A Perpetual Continuity Protocol**
@@ -58,21 +55,3 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     nSubsidy >>= halvings;
     return nSubsidy;
 }
-
-```
-
-## 📄 Whitepaper
-
-For the full discrete probability theory models and recurrence relations, please refer to the documentation available at the [Official Website]().
-
----
-
-## ⚖️ License
-
-This project is licensed under the MIT License - see the [LICENSE]() file for details.
-
-```
-
-**Precisa de ajuda para configurar o arquivo de licença ou criar um gráfico de projeção para o site?**
-
-```
